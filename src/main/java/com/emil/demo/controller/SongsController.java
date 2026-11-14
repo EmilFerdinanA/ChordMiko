@@ -1,5 +1,7 @@
 package com.emil.demo.controller;
 
+import com.emil.demo.constant.ApiUrl;
+import com.emil.demo.dto.response.CommonResponse;
 import com.emil.demo.entity.Songs;
 import com.emil.demo.service.SongsService;
 import jakarta.validation.Valid;
@@ -9,17 +11,36 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
-@RequestMapping("api/v1/songs")
+@RequestMapping(ApiUrl.SONGS)
 @AllArgsConstructor
 public class SongsController {
     private final SongsService songsService;
 
     @GetMapping
-    public  ResponseEntity<List<Songs>> getAll() {
+    public ResponseEntity<CommonResponse<List<Songs>>> getAllSongs() {
         List<Songs> all = songsService.getAll();
-        return ResponseEntity.ok().body(all);
+
+        CommonResponse<List<Songs>> build = CommonResponse.<List<Songs>>builder()
+                .status("success")
+                .message("Successfully retrieved songs")
+                .data(all).build();
+
+        return ResponseEntity.ok(build);
+    }
+
+    @GetMapping(path = "/{slug}")
+    public ResponseEntity<CommonResponse<?>> getSong(@PathVariable String slug) {
+        Optional<Songs> bySlug = songsService.getBySlug(slug);
+
+        CommonResponse<Object> build = CommonResponse.builder()
+                .status("success")
+                .message("Song retrieved successfully")
+                .data(bySlug).build();
+
+        return ResponseEntity.ok(build);
     }
 
     @PostMapping

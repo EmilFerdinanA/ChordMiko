@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -16,6 +17,11 @@ public class SongsServiceImpl implements SongsService {
     @Override
     public List<Songs> getAll() {
         return songsRepository.findAll();
+    }
+
+    @Override
+    public Optional<Songs> getBySlug(String slug) {
+        return songsRepository.findBySlug(slug);
     }
 
     @Override
